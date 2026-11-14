@@ -1,6 +1,8 @@
 package ru.drodionichev.finance.cli;
 
+import ru.drodionichev.finance.model.User;
 import ru.drodionichev.finance.model.Wallet;
+import ru.drodionichev.finance.service.AuthService;
 
 public class Main {
         public static void main(String[] args) {
@@ -28,5 +30,33 @@ public class Main {
             System.out.println(wallet.getRemainingBudget("Еда"));
             System.out.println(wallet.getRemainingBudget("Развлечения"));
             System.out.println(wallet.getRemainingBudget("Коммунальные услуги"));
+
+            AuthService authService = new AuthService();
+            authService.register("Sith", "1234");
+
+            User user1 = authService.login("Sith","1234");
+            Wallet wallet1 = user1.getWallet();
+            System.out.println(wallet1.getBalance()); // 0
+            wallet1.addIncome("Зарплата", 4000);
+            System.out.println(wallet1.getBalance()); // 4000
+
+            // негативные тесты
+//          authService.register("Sith", "1234");
+//          User user2 = authService.login("Sith","0000");
+
+            try {
+                authService.register("Sith", "1234");
+            } catch (IllegalArgumentException e){
+                System.out.println(e.getMessage());
+            }
+
+            try {
+                User user2 = authService.login("Sith","0000");
+            } catch (IllegalArgumentException e){
+                System.out.println(e.getMessage());
+            }
+
+
+
         }
 }
