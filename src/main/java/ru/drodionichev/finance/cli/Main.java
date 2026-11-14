@@ -3,6 +3,7 @@ package ru.drodionichev.finance.cli;
 import ru.drodionichev.finance.model.User;
 import ru.drodionichev.finance.model.Wallet;
 import ru.drodionichev.finance.service.AuthService;
+import ru.drodionichev.finance.service.FinanceService;
 
 public class Main {
         public static void main(String[] args) {
@@ -56,7 +57,17 @@ public class Main {
                 System.out.println(e.getMessage());
             }
 
-
+            FinanceService financeService =  new FinanceService();
+            wallet1.setBudget("Еда", 1000);
+            System.out.println(financeService.addExpense(user1, "Еда", 1000));
+            System.out.println(financeService.addExpense(user1, "Еда", 1000));
+            System.out.println(financeService.addExpense(user1, "Еда", 1000));
+            System.out.println(financeService.addExpense(user1, "Еда", 1000));
+            System.out.println(financeService.addExpense(user1, "Еда", 1000));
+            System.out.println(financeService.addExpense(user1, "Еда", 1000));
+            System.out.println(financeService.addExpense(user1, "Еда", 1000));
+            System.out.println(financeService.addExpense(user1, "Еда", 1000));
+            System.out.println(financeService.addExpense(user1, "Еда", 1000));
 
         }
 }
