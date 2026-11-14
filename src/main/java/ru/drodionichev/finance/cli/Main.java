@@ -15,14 +15,18 @@ public class Main {
             wallet.addExpense("Коммунальные услуги", 3000);
             wallet.addExpense("Такси", 1500);
 
-            System.out.println(wallet.getBalance());
+//            System.out.println(wallet.getBalance());
 
             wallet.setBudget("Еда", 4000);
             wallet.setBudget("Развлечения", 3000);
             wallet.setBudget("Коммунальные услуги", 2500);
 
-            System.out.println(wallet.getBudget("Еда"));
+//            System.out.println(wallet.getBudget("Еда"));
 //            wallet.hasBudget("Кот");
 //            wallet.getBudget("Кот");
+
+            System.out.println(wallet.getRemainingBudget("Еда"));
+            System.out.println(wallet.getRemainingBudget("Развлечения"));
+            System.out.println(wallet.getRemainingBudget("Коммунальные услуги"));
         }
 }

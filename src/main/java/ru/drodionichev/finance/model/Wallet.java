@@ -60,5 +60,42 @@ public class Wallet {
 
         return budgets.get(category);
     }
+
+    // сумма всех доходов
+    public double gettotalIncome(){
+        double income = 0;
+        for(Operation operation : operations){
+            if(operation.isIncome()){
+                income += operation.getAmount();
+            }
+        }
+        return income;
+    }
+
+    // сумма всех расходов
+    public double gettotalExpenses(){
+        double expenses = 0;
+        for(Operation operation : operations){
+            if(!operation.isIncome()){
+                expenses += operation.getAmount();
+            }
+        }
+        return expenses;
+    }
+
+    // сумма расходов одной категории
+    public double getExpensesByCategory(String category){
+        double expenses = 0;
+        for (Operation operation : operations){
+            if(!operation.isIncome() && operation.getCategory().equals(category)){
+                expenses += operation.getAmount();
+            }
+        }
+        return expenses;
+    }
+
+    public double getRemainingBudget(String category){
+        return getBudget(category) - getExpensesByCategory(category);
+    }
 }
 
