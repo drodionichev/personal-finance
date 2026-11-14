@@ -1,13 +1,13 @@
 package ru.drodionichev.finance.model;
 
 public class User {
-    final private String login;
+    private final String login;
     private String password;
     private final Wallet wallet;
 
-    public User (String login, String password) {
+    public User(String login, String password) {
 
-        if (login == null ||login.isBlank()) {
+        if (login == null || login.isBlank()) {
             throw new IllegalArgumentException("Login must be filled");
         }
 
@@ -20,11 +20,11 @@ public class User {
         this.wallet = new Wallet();
     }
 
-    public String getLogin(){
+    public String getLogin() {
         return login;
     }
 
-    public Wallet getWallet(){
+    public Wallet getWallet() {
         return wallet;
     }
 
@@ -33,7 +33,7 @@ public class User {
     }
 
     @Override
-    public boolean equals(Object obj){
+    public boolean equals(Object obj) {
         if (this == obj) return true;
         if (obj == null || getClass() != obj.getClass()) return false;
         User user = (User) obj;

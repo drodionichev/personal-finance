@@ -16,5 +16,13 @@ public class Main {
             wallet.addExpense("Такси", 1500);
 
             System.out.println(wallet.getBalance());
+
+            wallet.setBudget("Еда", 4000);
+            wallet.setBudget("Развлечения", 3000);
+            wallet.setBudget("Коммунальные услуги", 2500);
+
+            System.out.println(wallet.getBudget("Еда"));
+//            wallet.hasBudget("Кот");
+//            wallet.getBudget("Кот");
         }
 }
