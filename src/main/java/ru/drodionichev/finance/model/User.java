@@ -8,11 +8,11 @@ public class User {
     public User(String login, String password) {
 
         if (login == null || login.isBlank()) {
-            throw new IllegalArgumentException("Login must be filled");
+            throw new IllegalArgumentException("Логин не может быть пустым");
         }
 
         if (password == null || password.isBlank()) {
-            throw new IllegalArgumentException("Password must be filled");
+            throw new IllegalArgumentException("Пароль не может быть пустым");
         }
 
         this.login = login;

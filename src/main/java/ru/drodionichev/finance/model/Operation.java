@@ -8,11 +8,11 @@ public class Operation {
     public Operation(String category, double amount, boolean income) {
 
         if (amount <= 0) {
-            throw new IllegalArgumentException("Amount must be positive");
+            throw new IllegalArgumentException("Сумма должна быть больше нулю");
         }
 
         if (category == null || category.isBlank()) {
-            throw new IllegalArgumentException("Category must be filled");
+            throw new IllegalArgumentException("Категория должна быть не пустой");
         }
 
         this.category = category;
