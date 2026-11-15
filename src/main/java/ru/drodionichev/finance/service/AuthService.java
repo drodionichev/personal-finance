@@ -6,7 +6,15 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class AuthService {
-    private final Map<String, User> users = new HashMap<>();
+    private final Map<String, User> users;
+
+    public AuthService(Map<String, User> users){
+        this.users = users;
+    }
+
+    public Map<String, User> getUsers(){
+        return users;
+    }
 
     public User register(String login, String password){
         if(users.containsKey(login)){

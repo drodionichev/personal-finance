@@ -1,6 +1,8 @@
 package ru.drodionichev.finance.model;
 
-public class Operation {
+import java.io.Serializable;
+
+public class Operation implements Serializable {
     private String category;
     private double amount;
     private boolean income;

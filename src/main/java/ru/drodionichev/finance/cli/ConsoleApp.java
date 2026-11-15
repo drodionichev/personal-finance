@@ -4,14 +4,16 @@ import ru.drodionichev.finance.model.User;
 import ru.drodionichev.finance.model.Wallet;
 import ru.drodionichev.finance.service.AuthService;
 import ru.drodionichev.finance.service.FinanceService;
+import ru.drodionichev.finance.storage.FileStorage;
 
 import java.util.List;
 import java.util.Scanner;
 
 public class ConsoleApp {
     private User currentUser;
+    private final FileStorage storage = new FileStorage();
     private final FinanceService financeService = new FinanceService();
-    private final AuthService authService = new AuthService();
+    private final AuthService authService = new AuthService(storage.load());
     private final Scanner scanner = new Scanner(System.in);
 
     public void run() {
@@ -27,6 +29,7 @@ public class ConsoleApp {
                 case "budget" -> budget();
                 case "stats" -> stats();
                 case "exit" -> {
+                    save();
                     System.out.println("Выход");
                     return;
                 }
@@ -43,6 +46,7 @@ public class ConsoleApp {
         try {
             authService.register(username, password);
             System.out.println("Пользователь создан");
+            save();
         } catch (IllegalArgumentException e) {
             System.out.println(e.getMessage());
         }
@@ -80,6 +84,7 @@ public class ConsoleApp {
 
             currentUser.getWallet().addIncome(category, amount);
             System.out.println("Доход добавлен в размере: " + amount + " в категорию: " + category);
+            save();
         } catch (IllegalArgumentException e) {
             System.out.println(e.getMessage());
         }
@@ -100,6 +105,7 @@ public class ConsoleApp {
             for (String alert : alerts) {
                 System.out.println(alert);
             }
+            save();
         } catch (IllegalArgumentException e) {
             System.out.println(e.getMessage());
         }
@@ -116,6 +122,7 @@ public class ConsoleApp {
 
             currentUser.getWallet().setBudget(category, limit);
             System.out.println("Лимит на: " + category + " установлен в размере: " + limit);
+            save();
         } catch (IllegalArgumentException e) {
             System.out.println(e.getMessage());
         }
@@ -166,4 +173,7 @@ public class ConsoleApp {
         }
     }
 
+    private void save(){
+        storage.save(authService.getUsers());
+    }
 }

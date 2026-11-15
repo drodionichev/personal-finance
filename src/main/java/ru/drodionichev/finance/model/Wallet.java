@@ -3,7 +3,7 @@ package ru.drodionichev.finance.model;
 import java.io.Serializable;
 import java.util.*;
 
-public class Wallet{
+public class Wallet implements Serializable{
     private final  List<Operation> operations = new ArrayList<>();
     private final  Map<String, Double> budgets = new LinkedHashMap<>();
 
