@@ -8,7 +8,7 @@ public class Operation {
     public Operation(String category, double amount, boolean income) {
 
         if (amount <= 0) {
-            throw new IllegalArgumentException("Сумма должна быть больше нулю");
+            throw new IllegalArgumentException("Сумма должна быть больше нуля");
         }
 
         if (category == null || category.isBlank()) {

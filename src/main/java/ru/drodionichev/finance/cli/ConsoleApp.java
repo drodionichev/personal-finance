@@ -1,6 +1,7 @@
 package ru.drodionichev.finance.cli;
 
 import ru.drodionichev.finance.model.User;
+import ru.drodionichev.finance.model.Wallet;
 import ru.drodionichev.finance.service.AuthService;
 import ru.drodionichev.finance.service.FinanceService;
 
@@ -14,11 +15,9 @@ public class ConsoleApp {
     private final Scanner scanner = new Scanner(System.in);
 
     public void run() {
-        System.out.println("Здравствуйте! Доступные команды: register, login, income, expense, logout, budget, exit");
+        System.out.println("Здравствуйте! Доступные команды: register, login, income, expense, logout, budget, stats, exit");
         while (true) {
-            System.out.print(">");
-
-            String command = scanner.nextLine();
+            String command = readLine(">");
             switch (command) {
                 case "register" -> register();
                 case "login" -> login();
@@ -26,6 +25,7 @@ public class ConsoleApp {
                 case "income" -> income();
                 case "expense" -> expense();
                 case "budget" -> budget();
+                case "stats" -> stats();
                 case "exit" -> {
                     System.out.println("Выход");
                     return;
@@ -36,8 +36,7 @@ public class ConsoleApp {
     }
 
     private void register() {
-        System.out.print("Логин: ");
-        String username = scanner.nextLine();
+        String username = readLine("Логин: ");
         System.out.print("Пароль: ");
         String password = scanner.nextLine();
 
@@ -50,8 +49,7 @@ public class ConsoleApp {
     }
 
     private void login() {
-        System.out.print("Логин: ");
-        String username = scanner.nextLine();
+        String username = readLine("Логин: ");
         System.out.print("Пароль: ");
         String password = scanner.nextLine();
 
@@ -71,30 +69,17 @@ public class ConsoleApp {
         System.out.println("Вы вышли");
     }
 
-    private boolean checkLoggedIn() {
-        if (currentUser == null) {
-            System.out.println("Вы не вошли, введите login");
-            return false;
-        }
-        return true;
-    }
-
     private void income() {
         if (!checkLoggedIn()) {
             return;
         }
 
         try {
-            System.out.print("Введите категорию: ");
-            String category = scanner.nextLine();
-            System.out.print("Введите сумму: ");
-            String amountText = scanner.nextLine();
-            double amount = Double.parseDouble(amountText);
+            String category = readLine("Введите категорию: ");
+            double amount = readNumber("Введите сумму: ");
 
             currentUser.getWallet().addIncome(category, amount);
             System.out.println("Доход добавлен в размере: " + amount + " в категорию: " + category);
-        } catch (NumberFormatException e) {
-            System.out.println("Сумма должна быть числом");
         } catch (IllegalArgumentException e) {
             System.out.println(e.getMessage());
         }
@@ -106,11 +91,8 @@ public class ConsoleApp {
         }
 
         try {
-            System.out.print("Введите категорию: ");
-            String category = scanner.nextLine();
-            System.out.print("Введите сумму: ");
-            String expenseText = scanner.nextLine();
-            double amount = Double.parseDouble(expenseText);
+            String category = readLine("Введите категорию: ");
+            double amount = readNumber("Введите сумму: ");
 
             List<String> alerts = financeService.addExpense(currentUser, category, amount);
             System.out.println("Расход добавлен в размере: " + amount + " в категорию: " + category);
@@ -118,9 +100,6 @@ public class ConsoleApp {
             for (String alert : alerts) {
                 System.out.println(alert);
             }
-
-        } catch (NumberFormatException e) {
-            System.out.println("Сумма должна быть числом");
         } catch (IllegalArgumentException e) {
             System.out.println(e.getMessage());
         }
@@ -132,20 +111,59 @@ public class ConsoleApp {
         }
 
         try {
-            System.out.print("Введите категорию для бюджета: ");
-            String category = scanner.nextLine();
-            System.out.print("Введите лимит для категории: ");
-            String limitText = scanner.nextLine();
-            double limit = Double.parseDouble(limitText);
+            String category = readLine("Введите категорию для бюджета: ");
+            double limit = readNumber("Введите лимит для категории: ");
 
             currentUser.getWallet().setBudget(category, limit);
-            System.out.println("Бюджет на: " + category + " установлен в размере: " + limit);
-
-        } catch (NumberFormatException e) {
-            System.out.println("Сумма должна быть числом");
-
+            System.out.println("Лимит на: " + category + " установлен в размере: " + limit);
         } catch (IllegalArgumentException e) {
             System.out.println(e.getMessage());
         }
     }
+
+    private void stats() {
+        if (!checkLoggedIn()) {
+            return;
+        }
+
+        Wallet wallet = currentUser.getWallet();
+        System.out.println("Общий доход: " + wallet.getTotalIncome());
+        System.out.println("Общие расходы: " + wallet.getTotalExpenses());
+        System.out.println("Баланс: " + wallet.getBalance());
+
+        if (wallet.getBudgets().isEmpty()) {
+            System.out.println("Бюджеты не заданы");
+        } else {
+            System.out.println("Бюджеты: ");
+
+            for (String category : wallet.getBudgets().keySet()) {
+                System.out.println("Категория: " + category + ", Лимит: " + wallet.getBudget(category) + ", Осталось: " + wallet.getRemainingBudget(category));
+            }
+        }
+    }
+
+    private boolean checkLoggedIn () {
+        if (currentUser == null) {
+            System.out.println("Вы не вошли, введите login");
+            return false;
+        }
+        return true;
+    }
+
+    private String readLine (String text){
+        System.out.print(text);
+        return scanner.nextLine().trim();
+    }
+
+    private double readNumber(String text) {
+        while (true) {
+            String textInput = readLine(text);
+            try {
+                return Double.parseDouble(textInput);
+            } catch (NumberFormatException e) {
+                System.out.println("Это не число");
+            }
+        }
+    }
+
 }

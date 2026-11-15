@@ -1,14 +1,11 @@
 package ru.drodionichev.finance.model;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.HashMap;
-import java.util.Map;
+import java.io.Serializable;
+import java.util.*;
 
-public class Wallet {
+public class Wallet{
     private final  List<Operation> operations = new ArrayList<>();
-    private final  Map<String, Double> budgets = new HashMap<>();
+    private final  Map<String, Double> budgets = new LinkedHashMap<>();
 
     public Wallet() {
     }
@@ -62,7 +59,7 @@ public class Wallet {
     }
 
     // сумма всех доходов
-    public double gettotalIncome(){
+    public double getTotalIncome(){
         double income = 0;
         for(Operation operation : operations){
             if(operation.isIncome()){
@@ -73,7 +70,7 @@ public class Wallet {
     }
 
     // сумма всех расходов
-    public double gettotalExpenses(){
+    public double getTotalExpenses(){
         double expenses = 0;
         for(Operation operation : operations){
             if(!operation.isIncome()){
@@ -96,6 +93,10 @@ public class Wallet {
 
     public double getRemainingBudget(String category){
         return getBudget(category) - getExpensesByCategory(category);
+    }
+
+    public Map<String, Double> getBudgets(){
+        return Collections.unmodifiableMap(budgets);
     }
 }
 
