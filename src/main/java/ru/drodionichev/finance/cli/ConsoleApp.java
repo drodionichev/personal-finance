@@ -4,6 +4,7 @@ import ru.drodionichev.finance.model.User;
 import ru.drodionichev.finance.service.AuthService;
 import ru.drodionichev.finance.service.FinanceService;
 
+import java.util.List;
 import java.util.Scanner;
 
 public class ConsoleApp {
@@ -13,7 +14,7 @@ public class ConsoleApp {
     private final Scanner scanner = new Scanner(System.in);
 
     public void run() {
-        System.out.println("Здравствуйте! Доступные команды: register, login, income, logout, exit");
+        System.out.println("Здравствуйте! Доступные команды: register, login, income, expense, logout, budget, exit");
         while (true) {
             System.out.print(">");
 
@@ -23,6 +24,8 @@ public class ConsoleApp {
                 case "login" -> login();
                 case "logout" -> logout();
                 case "income" -> income();
+                case "expense" -> expense();
+                case "budget" -> budget();
                 case "exit" -> {
                     System.out.println("Выход");
                     return;
@@ -53,9 +56,8 @@ public class ConsoleApp {
         String password = scanner.nextLine();
 
         try {
-            authService.login(username, password);
-            System.out.println("Добро пожаловать, " + username);
             currentUser = authService.login(username, password);
+            System.out.println("Добро пожаловать, " + username);
         } catch (IllegalArgumentException e) {
             System.out.println(e.getMessage());
         }
@@ -91,11 +93,59 @@ public class ConsoleApp {
 
             currentUser.getWallet().addIncome(category, amount);
             System.out.println("Доход добавлен в размере: " + amount + " в категорию: " + category);
-        } catch (NumberFormatException e){
+        } catch (NumberFormatException e) {
             System.out.println("Сумма должна быть числом");
-        } catch (IllegalArgumentException e){
+        } catch (IllegalArgumentException e) {
             System.out.println(e.getMessage());
         }
     }
 
+    private void expense() {
+        if (!checkLoggedIn()) {
+            return;
+        }
+
+        try {
+            System.out.print("Введите категорию: ");
+            String category = scanner.nextLine();
+            System.out.print("Введите сумму: ");
+            String expenseText = scanner.nextLine();
+            double amount = Double.parseDouble(expenseText);
+
+            List<String> alerts = financeService.addExpense(currentUser, category, amount);
+            System.out.println("Расход добавлен в размере: " + amount + " в категорию: " + category);
+
+            for (String alert : alerts) {
+                System.out.println(alert);
+            }
+
+        } catch (NumberFormatException e) {
+            System.out.println("Сумма должна быть числом");
+        } catch (IllegalArgumentException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    private void budget() {
+        if (!checkLoggedIn()) {
+            return;
+        }
+
+        try {
+            System.out.print("Введите категорию для бюджета: ");
+            String category = scanner.nextLine();
+            System.out.print("Введите лимит для категории: ");
+            String limitText = scanner.nextLine();
+            double limit = Double.parseDouble(limitText);
+
+            currentUser.getWallet().setBudget(category, limit);
+            System.out.println("Бюджет на: " + category + " установлен в размере: " + limit);
+
+        } catch (NumberFormatException e) {
+            System.out.println("Сумма должна быть числом");
+
+        } catch (IllegalArgumentException e) {
+            System.out.println(e.getMessage());
+        }
+    }
 }
