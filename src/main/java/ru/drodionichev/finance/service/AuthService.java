@@ -2,7 +2,6 @@ package ru.drodionichev.finance.service;
 
 import ru.drodionichev.finance.model.User;
 
-import java.util.HashMap;
 import java.util.Map;
 
 public class AuthService {
