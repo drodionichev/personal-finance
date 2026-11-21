@@ -212,6 +212,6 @@ public class ConsoleApp {
         System.out.println("budget - установить лимит на категорию");
         System.out.println("stats - отобразить общий доход, расходы, баланс, остаток по каждому бюджету, доходы и расходы по категориям");
         System.out.println("exit - сохранить данные и выйти");
-        System.out.println("help - показать эту справку");
+        System.out.println("help - показать справку c командами");
     }
 }
