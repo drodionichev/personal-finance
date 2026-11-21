@@ -8,18 +8,28 @@ import java.util.List;
 
 public class FinanceService {
 
-    public List<String> addExpense(User user, String category, double amount){
+    public List<String> addExpense(User user, String category, double amount) {
         List<String> alerts = new ArrayList<>();
         Wallet wallet = user.getWallet();
         wallet.addExpense(category, amount);
 
-        if (wallet.hasBudget(category) && wallet.getRemainingBudget(category) < 0){
-            alerts.add("Бро, в категории: " + category + " жестко много тратишь, давай поменьше завозиков");
+        if (wallet.hasBudget(category)) {
+            double expense = wallet.getExpensesByCategory(category);
+            double limit = wallet.getBudget(category);
+
+            if (expense > limit) {
+                alerts.add("В категории: " + category + " затраты больше установленного лимита в: " + limit);
+            } else if ((expense / limit) * 100 >= 80) {
+                alerts.add("В категории: " + category + " осталось меньше 20% бюджета: " + (limit - expense));
+            }
         }
 
-        if (wallet.getBalance() < 0){
-            alerts.add("Бро, аларм, баланс меньше нуля(");
+        if (wallet.getBalance() == 0){
+            alerts.add("Баланс равен нулю ");
+        } else if (wallet.getBalance() < 0){
+            alerts.add("Баланс меньше нуля(");
         }
+
         return alerts;
     }
 }

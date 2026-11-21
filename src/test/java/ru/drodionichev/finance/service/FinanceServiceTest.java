@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class FinanceServiceTest {
 
     @Test
-    void noAlertsWhenWithinBudget () {
+    void noAlertsWhenWithinBudget() {
         User user = new User("Sith", "1234");
         user.getWallet().addIncome("Зарплата", 1000);
         user.getWallet().setBudget("Еда", 1000);
@@ -25,7 +25,7 @@ class FinanceServiceTest {
     }
 
     @Test
-    void alertWhenBudgetExceeded(){
+    void alertWhenBudgetExceeded() {
         User user = new User("Sith", "1234");
         user.getWallet().addIncome("Зарплата", 10000);
         user.getWallet().setBudget("Еда", 1000);
@@ -37,7 +37,7 @@ class FinanceServiceTest {
     }
 
     @Test
-    void alertWhenBalanceNegative(){
+    void alertWhenBalanceNegative() {
         User user = new User("Sith", "1234");
         user.getWallet().addIncome("Зарплата", 100);
 
@@ -48,7 +48,7 @@ class FinanceServiceTest {
     }
 
     @Test
-    void twoAlertsWhenBudgetExceededAndBalanceNegative(){
+    void twoAlertsWhenBudgetExceededAndBalanceNegative() {
         User user = new User("Sith", "1234");
         user.getWallet().addIncome("Зарплата", 100);
         user.getWallet().setBudget("Еда", 1000);
@@ -60,7 +60,7 @@ class FinanceServiceTest {
     }
 
     @Test
-    void noAlertsWhenSpentExactlyLimitAndBalanceZero(){
+    void twoAlertsWhenSpentExactlyLimitAndBalanceZero() {
         User user = new User("Sith", "1234");
         user.getWallet().addIncome("Зарплата", 1000);
         user.getWallet().setBudget("Еда", 1000);
@@ -68,6 +68,30 @@ class FinanceServiceTest {
         FinanceService financeService = new FinanceService();
         List<String> alerts = financeService.addExpense(user, "Еда", 1000);
 
-        assertTrue(alerts.isEmpty());
+        assertEquals(2, alerts.size());
+        ;
+    }
+
+    @Test
+    void alertWhen80PercentOfBudgetSpent() {
+        User user = new User("Sith", "1234");
+        user.getWallet().addIncome("Зарплата", 1000);
+        user.getWallet().setBudget("Еда", 1000);
+
+        FinanceService financeService = new FinanceService();
+        List<String> alerts = financeService.addExpense(user, "Еда", 800);
+
+        assertEquals(1, alerts.size());
+    }
+
+    @Test
+    void alertWhenBalanceIsZero() {
+        User user = new User("Sith", "1234");
+        user.getWallet().addIncome("Зарплата", 1000);
+
+        FinanceService financeService = new FinanceService();
+        List<String> alerts = financeService.addExpense(user, "Еда", 1000);
+
+        assertEquals(1, alerts.size());
     }
 }
