@@ -5,22 +5,25 @@ import ru.drodionichev.finance.model.Wallet;
 import ru.drodionichev.finance.service.AuthService;
 import ru.drodionichev.finance.service.FinanceService;
 import ru.drodionichev.finance.storage.FileStorage;
+import ru.drodionichev.finance.storage.Storage;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 
 public class ConsoleApp {
     private User currentUser;
-    private final FileStorage storage = new FileStorage();
+    private final Storage storage = new FileStorage();
     private final FinanceService financeService = new FinanceService();
     private final AuthService authService = new AuthService(storage.load());
     private final Scanner scanner = new Scanner(System.in);
 
     public void run() {
-        System.out.println("Здравствуйте! Доступные команды: register, login, income, expense, logout, budget, stats, exit");
+        System.out.println("Здравствуйте, введите help, чтобы ознакомиться с командами сервиса");
         while (true) {
             String command = readLine(">");
             switch (command) {
+                case "help" -> help();
                 case "register" -> register();
                 case "login" -> login();
                 case "logout" -> logout();
@@ -138,6 +141,29 @@ public class ConsoleApp {
         System.out.println("Общие расходы: " + wallet.getTotalExpenses());
         System.out.println("Баланс: " + wallet.getBalance());
 
+        Map<String, Double> incomes = wallet.getIncomeTotalsByCategory();
+        Map<String, Double> expense = wallet.getExpenseTotalsByCategory();
+
+        if (incomes.isEmpty()){
+            System.out.println("Доходов пока нет");
+        } else {
+            System.out.println("Доходы по категориям: ");
+
+            for (String category : incomes.keySet()) {
+                System.out.println("  " + category + ": " + incomes.get(category));
+            }
+        }
+
+        if (expense.isEmpty()){
+            System.out.println("Расходов пока нет");
+        } else {
+            System.out.println("Расходы по категориям: ");
+
+            for (String category : expense.keySet()) {
+                System.out.println("  " + category + ": " + expense.get(category));
+            }
+        }
+
         if (wallet.getBudgets().isEmpty()) {
             System.out.println("Бюджеты не заданы");
         } else {
@@ -175,5 +201,17 @@ public class ConsoleApp {
 
     private void save(){
         storage.save(authService.getUsers());
+    }
+
+    private void help() {
+        System.out.println("register - регистрация по логину и паролю");
+        System.out.println("login - вход в аккаунт по логину и паролю");
+        System.out.println("logout - выход из аккаунта");
+        System.out.println("income - добавить доход в категорию");
+        System.out.println("expense - добавить расход в категорию");
+        System.out.println("budget - установить лимит на категорию");
+        System.out.println("stats - отобразить общий доход, расходы, баланс, остаток по каждому бюджету, доходы и расходы по категориям");
+        System.out.println("exit - сохранить данные и выйти");
+        System.out.println("help - показать эту справку");
     }
 }

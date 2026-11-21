@@ -3,43 +3,43 @@ package ru.drodionichev.finance.model;
 import java.io.Serializable;
 import java.util.*;
 
-public class Wallet implements Serializable{
-    private final  List<Operation> operations = new ArrayList<>();
-    private final  Map<String, Double> budgets = new LinkedHashMap<>();
+public class Wallet implements Serializable {
+    private final List<Operation> operations = new ArrayList<>();
+    private final Map<String, Double> budgets = new LinkedHashMap<>();
 
     public Wallet() {
     }
 
     public void addIncome(String category, double amount) {
-        operations.add(new Operation(category, amount,true));
+        operations.add(new Operation(category, amount, true));
     }
 
     public void addExpense(String category, double amount) {
-        operations.add(new Operation(category, amount,false));
+        operations.add(new Operation(category, amount, false));
     }
 
     public double getBalance() {
         double balance = 0;
         for (Operation operation : operations) {
-            if (operation.isIncome()){
+            if (operation.isIncome()) {
                 balance += operation.getAmount();
-            } else{
+            } else {
                 balance -= operation.getAmount();
             }
         }
         return balance;
     }
 
-    public List<Operation> getOperation(){
+    public List<Operation> getOperation() {
         return Collections.unmodifiableList(operations);
     }
 
-    public void setBudget(String category, double limit){
-        if(category == null || category.isBlank()){
+    public void setBudget(String category, double limit) {
+        if (category == null || category.isBlank()) {
             throw new IllegalArgumentException("Категория не может быть пустой");
         }
 
-        if(limit <= 0) {
+        if (limit <= 0) {
             throw new IllegalArgumentException("Лимит должен быть больше нуля");
         }
 
@@ -50,8 +50,8 @@ public class Wallet implements Serializable{
         return budgets.containsKey(category);
     }
 
-    public double getBudget(String category){
-        if (!hasBudget(category)){
+    public double getBudget(String category) {
+        if (!hasBudget(category)) {
             throw new IllegalArgumentException("Бюджет для категории " + category + " не задан");
         }
 
@@ -59,10 +59,10 @@ public class Wallet implements Serializable{
     }
 
     // сумма всех доходов
-    public double getTotalIncome(){
+    public double getTotalIncome() {
         double income = 0;
-        for(Operation operation : operations){
-            if(operation.isIncome()){
+        for (Operation operation : operations) {
+            if (operation.isIncome()) {
                 income += operation.getAmount();
             }
         }
@@ -70,10 +70,10 @@ public class Wallet implements Serializable{
     }
 
     // сумма всех расходов
-    public double getTotalExpenses(){
+    public double getTotalExpenses() {
         double expenses = 0;
-        for(Operation operation : operations){
-            if(!operation.isIncome()){
+        for (Operation operation : operations) {
+            if (!operation.isIncome()) {
                 expenses += operation.getAmount();
             }
         }
@@ -81,22 +81,41 @@ public class Wallet implements Serializable{
     }
 
     // сумма расходов одной категории
-    public double getExpensesByCategory(String category){
+    public double getExpensesByCategory(String category) {
         double expenses = 0;
-        for (Operation operation : operations){
-            if(!operation.isIncome() && operation.getCategory().equals(category)){
+        for (Operation operation : operations) {
+            if (!operation.isIncome() && operation.getCategory().equals(category)) {
                 expenses += operation.getAmount();
             }
         }
         return expenses;
     }
 
-    public double getRemainingBudget(String category){
+    public double getRemainingBudget(String category) {
         return getBudget(category) - getExpensesByCategory(category);
     }
 
-    public Map<String, Double> getBudgets(){
+    public Map<String, Double> getBudgets() {
         return Collections.unmodifiableMap(budgets);
+    }
+
+    public Map<String, Double> getIncomeTotalsByCategory() {
+        return totalsByCategory(true);
+    }
+
+    public Map<String, Double> getExpenseTotalsByCategory() {
+        return totalsByCategory(false);
+    }
+
+    private Map<String, Double> totalsByCategory(boolean income) {
+        Map<String, Double> total = new LinkedHashMap<>();
+        for (Operation operation : operations) {
+            if (income == operation.isIncome()) {
+                double newCount = total.getOrDefault(operation.getCategory(), 0.0) + operation.getAmount();
+                total.put(operation.getCategory(), newCount);
+            }
+        }
+        return total;
     }
 }
 
